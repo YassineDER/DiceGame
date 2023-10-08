@@ -5,7 +5,7 @@ derived_file_type:
 - java_precompiled
 auto_id_policy: default
 beta_settings:
-  'source_reference': 'https://github.com/momo54/webandcloud#ad79d0b77c31b68cc927513d7e971ae169198323'
+  'source_reference': 'https://github.com/YassineDER/DiceGame.git#f8a6c46806ad2f37d04c9f26be0ea1b5afa444f1'
 env_variables:
   'ENDPOINTS_SERVICE_NAME': 'sobike44.appspot.com'
 api_version: 'user_defined'
