@@ -1,0 +1,440 @@
+{
+ "swagger": "2.0",
+ "info": {
+  "version": "1.0.0",
+  "title": "backendless-374223.appspot.com"
+ },
+ "host": "backendless-374223.appspot.com",
+ "basePath": "/_ah/api",
+ "schemes": [
+  "https"
+ ],
+ "consumes": [
+  "application/json"
+ ],
+ "produces": [
+  "application/json"
+ ],
+ "paths": {
+  "/myApi/v1/Hello": {
+   "get": {
+    "operationId": "MyApiHello",
+    "parameters": [ ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/User"
+      }
+     }
+    },
+    "security": [
+     {
+      "google_id_token-8d532454": [ ]
+     },
+     {
+      "google_id_token_https-8d532454": [ ]
+     }
+    ]
+   }
+  },
+  "/myApi/v1/addScore/{score}/{name}": {
+   "get": {
+    "operationId": "MyApiAddScore",
+    "parameters": [
+     {
+      "name": "score",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "format": "int32"
+     },
+     {
+      "name": "name",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/Entity"
+      }
+     }
+    },
+    "security": [
+     {
+      "google_id_token-8d532454": [ ]
+     },
+     {
+      "google_id_token_https-8d532454": [ ]
+     }
+    ]
+   }
+  },
+  "/myApi/v1/collectionresponse_entity": {
+   "get": {
+    "operationId": "MyApiGetPost",
+    "parameters": [
+     {
+      "name": "next",
+      "in": "query",
+      "required": false,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/CollectionResponse_Entity"
+      }
+     }
+    },
+    "security": [
+     {
+      "google_id_token-8d532454": [ ]
+     },
+     {
+      "google_id_token_https-8d532454": [ ]
+     }
+    ]
+   }
+  },
+  "/myApi/v1/mypost/{name}": {
+   "get": {
+    "operationId": "MyApiMypost",
+    "parameters": [
+     {
+      "name": "name",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "next",
+      "in": "query",
+      "required": false,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/CollectionResponse_Entity"
+      }
+     }
+    },
+    "security": [
+     {
+      "google_id_token-8d532454": [ ]
+     },
+     {
+      "google_id_token_https-8d532454": [ ]
+     }
+    ]
+   }
+  },
+  "/myApi/v1/myscores/{name}": {
+   "get": {
+    "operationId": "MyApiMyscores",
+    "parameters": [
+     {
+      "name": "name",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/EntityCollection"
+      }
+     }
+    },
+    "security": [
+     {
+      "google_id_token-8d532454": [ ]
+     },
+     {
+      "google_id_token_https-8d532454": [ ]
+     }
+    ]
+   }
+  },
+  "/myApi/v1/postMessage": {
+   "post": {
+    "operationId": "MyApiPostMessage",
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "required": false,
+      "schema": {
+       "$ref": "#/definitions/PostMessage"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/Entity"
+      }
+     }
+    },
+    "security": [
+     {
+      "google_id_token-8d532454": [ ]
+     },
+     {
+      "google_id_token_https-8d532454": [ ]
+     }
+    ]
+   }
+  },
+  "/myApi/v1/postMsg": {
+   "post": {
+    "operationId": "MyApiPostMsg",
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "required": false,
+      "schema": {
+       "$ref": "#/definitions/PostMessage"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/Entity"
+      }
+     }
+    },
+    "security": [
+     {
+      "google_id_token-8d532454": [ ]
+     },
+     {
+      "google_id_token_https-8d532454": [ ]
+     }
+    ]
+   }
+  },
+  "/myApi/v1/random": {
+   "get": {
+    "operationId": "MyApiRandom",
+    "parameters": [ ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/RandomResult"
+      }
+     }
+    },
+    "security": [
+     {
+      "google_id_token-8d532454": [ ]
+     },
+     {
+      "google_id_token_https-8d532454": [ ]
+     }
+    ]
+   }
+  },
+  "/myApi/v1/scores": {
+   "get": {
+    "operationId": "MyApiScores",
+    "parameters": [ ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/EntityCollection"
+      }
+     }
+    },
+    "security": [
+     {
+      "google_id_token-8d532454": [ ]
+     },
+     {
+      "google_id_token_https-8d532454": [ ]
+     }
+    ]
+   }
+  },
+  "/myApi/v1/topscores": {
+   "get": {
+    "operationId": "MyApiTopscores",
+    "parameters": [ ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/EntityCollection"
+      }
+     }
+    },
+    "security": [
+     {
+      "google_id_token-8d532454": [ ]
+     },
+     {
+      "google_id_token_https-8d532454": [ ]
+     }
+    ]
+   }
+  }
+ },
+ "securityDefinitions": {
+  "google_id_token_https-8d532454": {
+   "type": "oauth2",
+   "authorizationUrl": "",
+   "flow": "implicit",
+   "x-google-issuer": "https://accounts.google.com",
+   "x-google-jwks_uri": "https://www.googleapis.com/oauth2/v1/certs",
+   "x-google-audiences": "927375242383-t21v9ml38tkh2pr30m4hqiflkl3jfohl.apps.googleusercontent.com"
+  },
+  "google_id_token-8d532454": {
+   "type": "oauth2",
+   "authorizationUrl": "",
+   "flow": "implicit",
+   "x-google-issuer": "accounts.google.com",
+   "x-google-jwks_uri": "https://www.googleapis.com/oauth2/v1/certs",
+   "x-google-audiences": "927375242383-t21v9ml38tkh2pr30m4hqiflkl3jfohl.apps.googleusercontent.com"
+  }
+ },
+ "definitions": {
+  "_any": {
+   "type": "object"
+  },
+  "Entity": {
+   "type": "object",
+   "properties": {
+    "appId": {
+     "type": "string"
+    },
+    "key": {
+     "$ref": "#/definitions/Key"
+    },
+    "kind": {
+     "type": "string"
+    },
+    "namespace": {
+     "type": "string"
+    },
+    "parent": {
+     "$ref": "#/definitions/Key"
+    },
+    "properties": {
+     "$ref": "#/definitions/Map_String_Object"
+    },
+    "propertiesFrom": {
+     "$ref": "#/definitions/Entity"
+    }
+   }
+  },
+  "CollectionResponse_Entity": {
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/Entity"
+     }
+    },
+    "nextPageToken": {
+     "type": "string"
+    }
+   }
+  },
+  "User": {
+   "type": "object",
+   "properties": {
+    "email": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    }
+   }
+  },
+  "RandomResult": {
+   "type": "object",
+   "properties": {
+    "result": {
+     "type": "integer",
+     "format": "int32"
+    }
+   }
+  },
+  "EntityCollection": {
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/Entity"
+     }
+    }
+   }
+  },
+  "Map_String_Object": {
+   "type": "object",
+   "additionalProperties": {
+    "$ref": "#/definitions/_any"
+   }
+  },
+  "Key": {
+   "type": "object",
+   "properties": {
+    "appId": {
+     "type": "string"
+    },
+    "complete": {
+     "type": "boolean"
+    },
+    "id": {
+     "type": "integer",
+     "format": "int64"
+    },
+    "kind": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "namespace": {
+     "type": "string"
+    },
+    "parent": {
+     "$ref": "#/definitions/Key"
+    }
+   }
+  },
+  "PostMessage": {
+   "type": "object",
+   "properties": {
+    "body": {
+     "type": "string"
+    },
+    "owner": {
+     "type": "string"
+    },
+    "url": {
+     "type": "string"
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrefixQuery.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">WebAndCloud</a> &gt; <a href="index.source.html" class="el_package">foo</a> &gt; <span class="el_source">PrefixQuery.java</span></div><h1>PrefixQuery.java</h1><pre class="source lang-java linenums">package foo;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+
+
+@WebServlet(name = &quot;PrefixQuery&quot;, urlPatterns = { &quot;/prefixquery&quot; })
+<span class="nc" id="L26">public class PrefixQuery extends HttpServlet {</span>
+
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+<span class="nc" id="L31">		response.setContentType(&quot;text/html&quot;);</span>
+<span class="nc" id="L32">		response.setCharacterEncoding(&quot;UTF-8&quot;);</span>
+
+<span class="nc" id="L34">		response.getWriter().print(&quot;&lt;h1&gt; Querying Post Data &lt;/h1&gt;&quot;);</span>
+
+
+<span class="nc" id="L37">		response.getWriter().print(&quot;&lt;h2&gt; 2 Posts with key prefix f1 &lt;/h2&gt;&quot;);</span>
+<span class="nc" id="L38">		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
+<span class="nc" id="L39">		Key k = KeyFactory.createKey(&quot;Post&quot;, &quot;f1:&quot;);</span>
+
+		// query on key prefix
+<span class="nc" id="L42">		Query q = new Query(&quot;Post&quot;).setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.GREATER_THAN, k));</span>
+
+<span class="nc" id="L44">		PreparedQuery pq = datastore.prepare(q);</span>
+<span class="nc" id="L45">		List&lt;Entity&gt; result = pq.asList(FetchOptions.Builder.withLimit(2));</span>
+
+<span class="nc" id="L47">		response.getWriter().print(&quot;&lt;li&gt; result:&quot; + result.size() + &quot;&lt;br&gt;&quot;);</span>
+<span class="nc" id="L48">		Entity last=null;</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">		for (Entity entity : result) {</span>
+<span class="nc" id="L50">			response.getWriter().print(&quot;&lt;li&gt;&quot; + entity.getKey());</span>
+<span class="nc" id="L51">			last=entity;</span>
+<span class="nc" id="L52">		}</span>
+
+<span class="nc" id="L54">		response.getWriter().print(&quot;&lt;h2&gt; 10 Posts with key prefix f1:2020 &lt;/h2&gt;&quot;);</span>
+
+<span class="nc" id="L56">		k = KeyFactory.createKey(&quot;Post&quot;, &quot;f1:2020&quot;);</span>
+<span class="nc" id="L57">		q = new Query(&quot;Post&quot;).setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.GREATER_THAN, k));</span>
+
+<span class="nc" id="L59">		pq = datastore.prepare(q);</span>
+<span class="nc" id="L60">		result = pq.asList(FetchOptions.Builder.withLimit(10));</span>
+
+<span class="nc" id="L62">		response.getWriter().print(&quot;&lt;li&gt; result:&quot; + result.size() + &quot;&lt;br&gt;&quot;);</span>
+<span class="nc" id="L63">		last=null;</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">		for (Entity entity : result) {</span>
+<span class="nc" id="L65">			response.getWriter().print(&quot;&lt;li&gt;&quot; + entity.getKey());</span>
+<span class="nc" id="L66">			last=entity;</span>
+<span class="nc" id="L67">		}</span>
+
+		// Get all post where &quot;f1&quot; is in the receiver list (the 'to' list)
+<span class="nc" id="L70">		response.getWriter().print(&quot;&lt;h2&gt; 10 posts with f1 as receiver &lt;/h2&gt;&quot;);</span>
+
+<span class="nc" id="L72">		q = new Query(&quot;Post&quot;).setFilter(new FilterPredicate(&quot;to&quot;, FilterOperator.EQUAL, &quot;f1&quot;));</span>
+
+<span class="nc" id="L74">		pq = datastore.prepare(q);</span>
+<span class="nc" id="L75">		result = pq.asList(FetchOptions.Builder.withLimit(10));</span>
+
+<span class="nc" id="L77">		response.getWriter().print(&quot;&lt;li&gt; result:&quot; + result.size() + &quot;&lt;br&gt;&quot;);</span>
+<span class="nc" id="L78">		last=null;</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">		for (Entity entity : result) {</span>
+<span class="nc" id="L80">			response.getWriter().print(&quot;&lt;li&gt;&quot; + entity.getProperty(&quot;body&quot;));</span>
+<span class="nc" id="L81">			last=entity;</span>
+<span class="nc" id="L82">		}</span>
+		
+		// comment liker ??
+		// comment liker last.getKey()???
+		
+<span class="nc" id="L87">		response.getWriter().print(&quot;&lt;h2&gt; Does f1 liked the last post &lt;/h2&gt;&quot;);</span>
+		
+		// Does &quot;f1&quot; liked the last post ??
+<span class="nc" id="L90">		Key post=last.getKey();</span>
+<span class="nc" id="L91">		response.getWriter().print(&quot;examining:&quot;+post);</span>
+<span class="nc" id="L92">		q = new Query(&quot;Post&quot;).setFilter(CompositeFilterOperator.and(</span>
+				new FilterPredicate(&quot;like&quot;, FilterOperator.EQUAL, &quot;f1&quot;),
+				new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, post)));
+
+<span class="nc" id="L96">		pq = datastore.prepare(q);</span>
+<span class="nc" id="L97">		result = pq.asList(FetchOptions.Builder.withLimit(1));</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">		if (result.size()&gt;0) {</span>
+<span class="nc" id="L99">			response.getWriter().print(&quot;nothing to do&quot;);</span>
+		} 
+		// write the entity with the &quot;f1&quot; in post.like...
+<span class="nc" id="L102">		response.getWriter().print(&quot;adding f1 anyway&quot;);</span>
+<span class="nc" id="L103">		response.getWriter().print(&quot;last key:&quot;+last.getKey()+&quot;, like:&quot;+last.getProperty(&quot;like&quot;));</span>
+//		last.setProperty(&quot;like&quot;, last.getProperty(&quot;like&quot;)+&quot; f1&quot;));
+		//last.setProperty(&quot;count&quot;,last.)
+<span class="nc" id="L106">		datastore.put(last);</span>
+<span class="nc" id="L107">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
