@@ -81,10 +81,9 @@
             list: [],
             myscore: null,
             loadList: function () {
-                return m.request({ method: "GET", url: "_ah/api/myApi/v1/topscores/" })
+                return m.request({ method: "GET", url: "https://backendless-374223.ew.r.appspot.com/_ah/api/myApi/v1/topscores/" })
                     .then(function (result) {
                         Score.list = result.items
-                        console.log("got:", result.items)
                         // m.redraw(true) 
                     })
             },
@@ -92,10 +91,9 @@
                 console.log("saving...", Score.current)
                 return m.request({
                     method: "GET",
-                    url: "_ah/api/myApi/v1/addScore/" + score + "/" + name
+                    url: "https://backendless-374223.ew.r.appspot.com/_ah/api/myApi/v1/addScore/" + score + "/" + name
                 })
                     .then(function (result) {
-                        console.log("got:", result)
                         Score.loadList()
                     })
             },
@@ -106,7 +104,6 @@
                         .then(function (result) {
                             if (result && result.properties && result.properties.score) {
                                 Score.myscore = result.properties.score.toString()
-                                console.log("current score: ", Score.myscore)
                             }
                             else Score.myscore = "Invalid name or no score found"
                         })
@@ -135,14 +132,13 @@
             }
         }
 
-
         // Displaying actual score 
         var CurrentScoreView = {
             oninit: function () { Score.currentScore(DiceGame.name) },
             view: function () {
                 return m('div', { class: 'level-item has-text-centered' }, [
                     m('div', [
-                        m('p', { class: 'heading' }, DiceGame.name + " current score"),
+                        m('p', { class: 'heading' }, DiceGame.name + " current score TEST"),
                         m('p', { class: 'title' }, Score.myscore)
                     ])
                 ])

@@ -18,7 +18,7 @@
  "paths": {
   "/myApi/v1/Hello": {
    "get": {
-    "operationId": "MyApiHello",
+    "operationId": "MyApiV1Hello",
     "parameters": [ ],
     "responses": {
      "200": {
@@ -40,7 +40,7 @@
   },
   "/myApi/v1/addScore/{score}/{name}": {
    "get": {
-    "operationId": "MyApiAddScore",
+    "operationId": "MyApiV1AddScore",
     "parameters": [
      {
       "name": "score",
@@ -76,7 +76,7 @@
   },
   "/myApi/v1/collectionresponse_entity": {
    "get": {
-    "operationId": "MyApiGetPost",
+    "operationId": "MyApiV1GetPost",
     "parameters": [
      {
       "name": "next",
@@ -105,7 +105,7 @@
   },
   "/myApi/v1/mypost/{name}": {
    "get": {
-    "operationId": "MyApiMypost",
+    "operationId": "MyApiV1Mypost",
     "parameters": [
      {
       "name": "name",
@@ -140,7 +140,7 @@
   },
   "/myApi/v1/myscores/{name}": {
    "get": {
-    "operationId": "MyApiMyscores",
+    "operationId": "MyApiV1Myscores",
     "parameters": [
      {
       "name": "name",
@@ -169,7 +169,7 @@
   },
   "/myApi/v1/postMessage": {
    "post": {
-    "operationId": "MyApiPostMessage",
+    "operationId": "MyApiV1PostMessage",
     "parameters": [
      {
       "in": "body",
@@ -200,7 +200,7 @@
   },
   "/myApi/v1/postMsg": {
    "post": {
-    "operationId": "MyApiPostMsg",
+    "operationId": "MyApiV1PostMsg",
     "parameters": [
      {
       "in": "body",
@@ -231,7 +231,7 @@
   },
   "/myApi/v1/random": {
    "get": {
-    "operationId": "MyApiRandom",
+    "operationId": "MyApiV1Random",
     "parameters": [ ],
     "responses": {
      "200": {
@@ -253,7 +253,7 @@
   },
   "/myApi/v1/scores": {
    "get": {
-    "operationId": "MyApiScores",
+    "operationId": "MyApiV1Scores",
     "parameters": [ ],
     "responses": {
      "200": {
@@ -275,7 +275,7 @@
   },
   "/myApi/v1/topscores": {
    "get": {
-    "operationId": "MyApiTopscores",
+    "operationId": "MyApiV1Topscores",
     "parameters": [ ],
     "responses": {
      "200": {
@@ -297,14 +297,6 @@
   }
  },
  "securityDefinitions": {
-  "google_id_token_https-8d532454": {
-   "type": "oauth2",
-   "authorizationUrl": "",
-   "flow": "implicit",
-   "x-google-issuer": "https://accounts.google.com",
-   "x-google-jwks_uri": "https://www.googleapis.com/oauth2/v1/certs",
-   "x-google-audiences": "927375242383-t21v9ml38tkh2pr30m4hqiflkl3jfohl.apps.googleusercontent.com"
-  },
   "google_id_token-8d532454": {
    "type": "oauth2",
    "authorizationUrl": "",
@@ -312,11 +304,61 @@
    "x-google-issuer": "accounts.google.com",
    "x-google-jwks_uri": "https://www.googleapis.com/oauth2/v1/certs",
    "x-google-audiences": "927375242383-t21v9ml38tkh2pr30m4hqiflkl3jfohl.apps.googleusercontent.com"
+  },
+  "google_id_token_https-8d532454": {
+   "type": "oauth2",
+   "authorizationUrl": "",
+   "flow": "implicit",
+   "x-google-issuer": "https://accounts.google.com",
+   "x-google-jwks_uri": "https://www.googleapis.com/oauth2/v1/certs",
+   "x-google-audiences": "927375242383-t21v9ml38tkh2pr30m4hqiflkl3jfohl.apps.googleusercontent.com"
   }
  },
  "definitions": {
+  "RandomResult": {
+   "type": "object",
+   "properties": {
+    "result": {
+     "type": "integer",
+     "format": "int32"
+    }
+   }
+  },
+  "Key": {
+   "type": "object",
+   "properties": {
+    "appId": {
+     "type": "string"
+    },
+    "complete": {
+     "type": "boolean"
+    },
+    "id": {
+     "type": "integer",
+     "format": "int64"
+    },
+    "kind": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "namespace": {
+     "type": "string"
+    },
+    "parent": {
+     "$ref": "#/definitions/Key"
+    }
+   }
+  },
   "_any": {
    "type": "object"
+  },
+  "Map_String_Object": {
+   "type": "object",
+   "additionalProperties": {
+    "$ref": "#/definitions/_any"
+   }
   },
   "Entity": {
    "type": "object",
@@ -369,15 +411,6 @@
     }
    }
   },
-  "RandomResult": {
-   "type": "object",
-   "properties": {
-    "result": {
-     "type": "integer",
-     "format": "int32"
-    }
-   }
-  },
   "EntityCollection": {
    "type": "object",
    "properties": {
@@ -386,39 +419,6 @@
      "items": {
       "$ref": "#/definitions/Entity"
      }
-    }
-   }
-  },
-  "Map_String_Object": {
-   "type": "object",
-   "additionalProperties": {
-    "$ref": "#/definitions/_any"
-   }
-  },
-  "Key": {
-   "type": "object",
-   "properties": {
-    "appId": {
-     "type": "string"
-    },
-    "complete": {
-     "type": "boolean"
-    },
-    "id": {
-     "type": "integer",
-     "format": "int64"
-    },
-    "kind": {
-     "type": "string"
-    },
-    "name": {
-     "type": "string"
-    },
-    "namespace": {
-     "type": "string"
-    },
-    "parent": {
-     "$ref": "#/definitions/Key"
     }
    }
   },

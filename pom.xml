@@ -17,8 +17,8 @@
   </parent>
 
   <properties>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.source>8</maven.compiler.source>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -47,8 +47,9 @@
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-1.0-sdk</artifactId>
-      <version>1.9.79</version>
+      <version>2.0.21</version>
     </dependency>
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -77,6 +78,8 @@
     <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes
     </outputDirectory>
     <plugins>
+
+    
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -91,27 +94,34 @@
           </webResources>
         </configuration>
       </plugin>
+
+
       <plugin>
         <groupId>com.google.cloud.tools</groupId>
         <artifactId>appengine-maven-plugin</artifactId>
-        <version>2.2.0</version>
+        <version>2.5.0</version>
         <configuration>
             <promote>true</promote>
+            <devserver.port>8083</devserver.port>
           <!-- deploy configuration -->
           <projectId>GCLOUD_CONFIG</projectId>
           <version>GCLOUD_CONFIG</version>
         </configuration>
       </plugin>
+
+
       <!-- [START endpoints_plugin] -->
       <plugin>
         <groupId>com.google.cloud.tools</groupId>
         <artifactId>endpoints-framework-maven-plugin</artifactId>
-        <version>2.0.1</version>
+        <version>2.1.0</version>
         <configuration>
           <!-- plugin configuration -->
           <hostname>${endpoints.project.id}.appspot.com</hostname>
         </configuration>
       </plugin>
+
+
       <!-- [END endpoints_plugin] -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -127,6 +137,8 @@
           </execution>
         </executions>
       </plugin>
+
+
     </plugins>
   </build>
 </project>
