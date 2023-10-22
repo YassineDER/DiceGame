@@ -7,8 +7,8 @@ set -x
 set -e
 
 # Command to clean and package your project
-mvn clean install
-mvn package
+mvn clean package
+mvn install
 
 # Generate API
 mvn endpoints-framework:openApiDocs

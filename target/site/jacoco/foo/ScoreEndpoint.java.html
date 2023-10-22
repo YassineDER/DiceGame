@@ -82,53 +82,54 @@ import com.google.appengine.api.datastore.Transaction;
 
 
 	@ApiMethod(name = &quot;myscores&quot;, httpMethod = HttpMethod.GET)
-	public Entity myscores(@Named(&quot;name&quot;) String name) {
+	public List&lt;Entity&gt; myscores(@Named(&quot;name&quot;) String name) {
 <span class="nc" id="L86">		Query q = new Query(&quot;Score&quot;).setFilter(new FilterPredicate(&quot;name&quot;, FilterOperator.EQUAL, name)).addSort(&quot;score&quot;,SortDirection.DESCENDING);</span>
         // Query q = new Query(&quot;Score&quot;).setFilter(new FilterPredicate(&quot;name&quot;, FilterOperator.EQUAL, name));
 
 <span class="nc" id="L89">		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
 <span class="nc" id="L90">		PreparedQuery pq = datastore.prepare(q);</span>
-<span class="nc" id="L91">		Entity E = pq.asSingleEntity();</span>
-<span class="nc" id="L92">		return E;</span>
+		// Entity E = pq.asSingleEntity();
+<span class="nc" id="L92">        List&lt;Entity&gt; E = pq.asList(FetchOptions.Builder.withLimit(10));</span>
+<span class="nc" id="L93">		return E;</span>
 	}
 
 
 	@ApiMethod(name = &quot;addScore&quot;, httpMethod = HttpMethod.GET)
 	public Entity addScore(@Named(&quot;score&quot;) int score, @Named(&quot;name&quot;) String name) {
 
-<span class="nc" id="L99">		Entity e = new Entity(&quot;Score&quot;, &quot;&quot; + name + score);</span>
-<span class="nc" id="L100">		e.setProperty(&quot;name&quot;, name);</span>
-<span class="nc" id="L101">		e.setProperty(&quot;score&quot;, score);</span>
+<span class="nc" id="L100">		Entity e = new Entity(&quot;Score&quot;, &quot;&quot; + name + score);</span>
+<span class="nc" id="L101">		e.setProperty(&quot;name&quot;, name);</span>
+<span class="nc" id="L102">		e.setProperty(&quot;score&quot;, score);</span>
 
-<span class="nc" id="L103">		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
-<span class="nc" id="L104">		datastore.put(e);</span>
+<span class="nc" id="L104">		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
+<span class="nc" id="L105">		datastore.put(e);</span>
 
-<span class="nc" id="L106">		return e;</span>
+<span class="nc" id="L107">		return e;</span>
 	}
 
 
 	@ApiMethod(name = &quot;postMessage&quot;, httpMethod = HttpMethod.POST)
 	public Entity postMessage(PostMessage pm) {
 
-<span class="nc" id="L113">		Entity e = new Entity(&quot;Post&quot;); // quelle est la clef ?? non specifié -&gt; clef automatique</span>
-<span class="nc" id="L114">		e.setProperty(&quot;owner&quot;, pm.owner);</span>
-<span class="nc" id="L115">		e.setProperty(&quot;url&quot;, pm.url);</span>
-<span class="nc" id="L116">		e.setProperty(&quot;body&quot;, pm.body);</span>
-<span class="nc" id="L117">		e.setProperty(&quot;likec&quot;, 0);</span>
-<span class="nc" id="L118">		e.setProperty(&quot;date&quot;, new Date());</span>
+<span class="nc" id="L114">		Entity e = new Entity(&quot;Post&quot;); // quelle est la clef ?? non specifié -&gt; clef automatique</span>
+<span class="nc" id="L115">		e.setProperty(&quot;owner&quot;, pm.owner);</span>
+<span class="nc" id="L116">		e.setProperty(&quot;url&quot;, pm.url);</span>
+<span class="nc" id="L117">		e.setProperty(&quot;body&quot;, pm.body);</span>
+<span class="nc" id="L118">		e.setProperty(&quot;likec&quot;, 0);</span>
+<span class="nc" id="L119">		e.setProperty(&quot;date&quot;, new Date());</span>
 
-<span class="nc" id="L120">		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
-<span class="nc" id="L121">		Transaction txn = datastore.beginTransaction();</span>
-<span class="nc" id="L122">		datastore.put(e);</span>
-<span class="nc" id="L123">		txn.commit();</span>
-<span class="nc" id="L124">		return e;</span>
+<span class="nc" id="L121">		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
+<span class="nc" id="L122">		Transaction txn = datastore.beginTransaction();</span>
+<span class="nc" id="L123">		datastore.put(e);</span>
+<span class="nc" id="L124">		txn.commit();</span>
+<span class="nc" id="L125">		return e;</span>
 	}
 
 
 	@ApiMethod(name = &quot;mypost&quot;, httpMethod = HttpMethod.GET)
 	public CollectionResponse&lt;Entity&gt; mypost(@Named(&quot;name&quot;) String name, @Nullable @Named(&quot;next&quot;) String cursorString) {
 
-<span class="nc" id="L131">	    Query q = new Query(&quot;Post&quot;).setFilter(new FilterPredicate(&quot;owner&quot;, FilterOperator.EQUAL, name));</span>
+<span class="nc" id="L132">	    Query q = new Query(&quot;Post&quot;).setFilter(new FilterPredicate(&quot;owner&quot;, FilterOperator.EQUAL, name));</span>
 
 	    // https://cloud.google.com/appengine/docs/standard/python/datastore/projectionqueries#Indexes_for_projections
 	    //q.addProjection(new PropertyProjection(&quot;body&quot;, String.class));
@@ -142,19 +143,19 @@ import com.google.appengine.api.datastore.Transaction;
 	    // Explosion combinatoire.
 	    // q.addSort(&quot;date&quot;, SortDirection.DESCENDING);
 	    
-<span class="nc" id="L145">	    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
-<span class="nc" id="L146">	    PreparedQuery pq = datastore.prepare(q);</span>
+<span class="nc" id="L146">	    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
+<span class="nc" id="L147">	    PreparedQuery pq = datastore.prepare(q);</span>
 	    
-<span class="nc" id="L148">	    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(2);</span>
+<span class="nc" id="L149">	    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(2);</span>
 	    
-<span class="nc bnc" id="L150" title="All 2 branches missed.">	    if (cursorString != null) {</span>
-<span class="nc" id="L151">		fetchOptions.startCursor(Cursor.fromWebSafeString(cursorString));</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">	    if (cursorString != null) {</span>
+<span class="nc" id="L152">		fetchOptions.startCursor(Cursor.fromWebSafeString(cursorString));</span>
 		}
 	    
-<span class="nc" id="L154">	    QueryResultList&lt;Entity&gt; results = pq.asQueryResultList(fetchOptions);</span>
-<span class="nc" id="L155">	    cursorString = results.getCursor().toWebSafeString();</span>
+<span class="nc" id="L155">	    QueryResultList&lt;Entity&gt; results = pq.asQueryResultList(fetchOptions);</span>
+<span class="nc" id="L156">	    cursorString = results.getCursor().toWebSafeString();</span>
 	    
-<span class="nc" id="L157">	    return CollectionResponse.&lt;Entity&gt;builder().setItems(results).setNextPageToken(cursorString).build();</span>
+<span class="nc" id="L158">	    return CollectionResponse.&lt;Entity&gt;builder().setItems(results).setNextPageToken(cursorString).build();</span>
 	    
 	}
     
@@ -163,12 +164,12 @@ import com.google.appengine.api.datastore.Transaction;
 	public CollectionResponse&lt;Entity&gt; getPost(User user, @Nullable @Named(&quot;next&quot;) String cursorString)
 			throws UnauthorizedException {
 
-<span class="nc bnc" id="L166" title="All 2 branches missed.">		if (user == null) {</span>
-<span class="nc" id="L167">			throw new UnauthorizedException(&quot;Invalid credentials&quot;);</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">		if (user == null) {</span>
+<span class="nc" id="L168">			throw new UnauthorizedException(&quot;Invalid credentials&quot;);</span>
 		}
 
-<span class="nc" id="L170">		Query q = new Query(&quot;Post&quot;).</span>
-<span class="nc" id="L171">		    setFilter(new FilterPredicate(&quot;owner&quot;, FilterOperator.EQUAL, user.getEmail()));</span>
+<span class="nc" id="L171">		Query q = new Query(&quot;Post&quot;).</span>
+<span class="nc" id="L172">		    setFilter(new FilterPredicate(&quot;owner&quot;, FilterOperator.EQUAL, user.getEmail()));</span>
 
 		// Multiple projection require a composite index
 		// owner is automatically projected...
@@ -187,47 +188,47 @@ import com.google.appengine.api.datastore.Transaction;
 
 		// q.addSort(&quot;date&quot;, SortDirection.DESCENDING);
 
-<span class="nc" id="L190">		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
-<span class="nc" id="L191">		PreparedQuery pq = datastore.prepare(q);</span>
+<span class="nc" id="L191">		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
+<span class="nc" id="L192">		PreparedQuery pq = datastore.prepare(q);</span>
 
-<span class="nc" id="L193">		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(2);</span>
+<span class="nc" id="L194">		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(2);</span>
 
-<span class="nc bnc" id="L195" title="All 2 branches missed.">		if (cursorString != null) {</span>
-<span class="nc" id="L196">			fetchOptions.startCursor(Cursor.fromWebSafeString(cursorString));</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">		if (cursorString != null) {</span>
+<span class="nc" id="L197">			fetchOptions.startCursor(Cursor.fromWebSafeString(cursorString));</span>
 		}
 
-<span class="nc" id="L199">		QueryResultList&lt;Entity&gt; results = pq.asQueryResultList(fetchOptions);</span>
-<span class="nc" id="L200">		cursorString = results.getCursor().toWebSafeString();</span>
+<span class="nc" id="L200">		QueryResultList&lt;Entity&gt; results = pq.asQueryResultList(fetchOptions);</span>
+<span class="nc" id="L201">		cursorString = results.getCursor().toWebSafeString();</span>
 
-<span class="nc" id="L202">		return CollectionResponse.&lt;Entity&gt;builder().setItems(results).setNextPageToken(cursorString).build();</span>
+<span class="nc" id="L203">		return CollectionResponse.&lt;Entity&gt;builder().setItems(results).setNextPageToken(cursorString).build();</span>
 	}
 
 
 	@ApiMethod(name = &quot;postMsg&quot;, httpMethod = HttpMethod.POST)
 	public Entity postMsg(User user, PostMessage pm) throws UnauthorizedException {
 
-<span class="nc bnc" id="L209" title="All 2 branches missed.">		if (user == null) {</span>
-<span class="nc" id="L210">			throw new UnauthorizedException(&quot;Invalid credentials&quot;);</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">		if (user == null) {</span>
+<span class="nc" id="L211">			throw new UnauthorizedException(&quot;Invalid credentials&quot;);</span>
 		}
 
-<span class="nc" id="L213">		Entity e = new Entity(&quot;Post&quot;, Long.MAX_VALUE-(new Date()).getTime()+&quot;:&quot;+user.getEmail());</span>
-<span class="nc" id="L214">		e.setProperty(&quot;owner&quot;, user.getEmail());</span>
-<span class="nc" id="L215">		e.setProperty(&quot;url&quot;, pm.url);</span>
-<span class="nc" id="L216">		e.setProperty(&quot;body&quot;, pm.body);</span>
-<span class="nc" id="L217">		e.setProperty(&quot;likec&quot;, 0);</span>
-<span class="nc" id="L218">		e.setProperty(&quot;date&quot;, new Date());</span>
+<span class="nc" id="L214">		Entity e = new Entity(&quot;Post&quot;, Long.MAX_VALUE-(new Date()).getTime()+&quot;:&quot;+user.getEmail());</span>
+<span class="nc" id="L215">		e.setProperty(&quot;owner&quot;, user.getEmail());</span>
+<span class="nc" id="L216">		e.setProperty(&quot;url&quot;, pm.url);</span>
+<span class="nc" id="L217">		e.setProperty(&quot;body&quot;, pm.body);</span>
+<span class="nc" id="L218">		e.setProperty(&quot;likec&quot;, 0);</span>
+<span class="nc" id="L219">		e.setProperty(&quot;date&quot;, new Date());</span>
 
 ///		Solution pour pas projeter les listes
 //		Entity pi = new Entity(&quot;PostIndex&quot;, e.getKey());
 //		HashSet&lt;String&gt; rec=new HashSet&lt;String&gt;();
 //		pi.setProperty(&quot;receivers&quot;,rec);
 		
-<span class="nc" id="L225">		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
-<span class="nc" id="L226">		Transaction txn = datastore.beginTransaction();</span>
-<span class="nc" id="L227">		datastore.put(e);</span>
+<span class="nc" id="L226">		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();</span>
+<span class="nc" id="L227">		Transaction txn = datastore.beginTransaction();</span>
+<span class="nc" id="L228">		datastore.put(e);</span>
 //		datastore.put(pi);
-<span class="nc" id="L229">		txn.commit();</span>
-<span class="nc" id="L230">		return e;</span>
+<span class="nc" id="L230">		txn.commit();</span>
+<span class="nc" id="L231">		return e;</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

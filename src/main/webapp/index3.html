@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>DiceGame</title>
-    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://unpkg.com/mithril/mithril.js"></script>
+    <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 
@@ -21,65 +22,71 @@
             d2: 1,
             name: '',
             score: 0,
+            authenticated: false,
 
             play: function () {
-                if (this.turn < 10) {
-                    this.d1 = Math.floor((Math.random() * 5) + 1);
-                    this.d2 = Math.floor((Math.random() * 5) + 1);
-                    if (this.d1 + this.d2 == 7) {
-                        this.score += 10;
+                if (DiceGame.authenticated) {
+                    if (this.turn < 10) {
+                        this.d1 = Math.floor((Math.random() * 5) + 1);
+                        this.d2 = Math.floor((Math.random() * 5) + 1);
+                        if (this.d1 + this.d2 == 7) {
+                            this.score += 10;
+                        }
+                        this.turn++;
+                    } else {
+                        Score.save(this.score, this.name);
+                        Score.LoadCurrentScores(DiceGame.name)
+                        this.turn = 0;
+                        this.score = 0;
+                        m.redraw()
                     }
-                    this.turn++;
-                } else {
-                    Score.save(this.score, this.name);
-                    this.turn = 0;
-                    this.score = 0;
                 }
             }
-        } // DiceGame
-
+        }
 
         var DiceView = {
             view: function () {
-                return m('div', [
-                    m('div', { class: 'subtitle' }, "Just play here"),
-                    m('div', { class: 'field has-addons' }, [
-                        m('div', { class: 'control is-full' }, [
-                            m("input[type=text][placeholder=name]", {
-                                id: "txtScore",
-                                class: 'input is-rounded',
-                            })
+                let displayStyle = DiceGame.authenticated ? "block" : "none";
+                return m('div', { style: `display: ${displayStyle};` }, [
+                    m('div', { class: 'container' }, [
+                        m('div', { class: 'subtitle' }, "Just play here"),
+                        m('div', { class: 'level' }, [
+                            m('div', { class: 'level-item has-text-centered' }, [
+                                m('div', [
+                                    m('p', { class: 'heading' }, "Turn"),
+                                    m('p', { class: 'title' }, DiceGame.turn)
+                                ])
+                            ]),
+                            m('div', { class: 'level-item has-text-centered' }, [
+                                m('div', [
+                                    m('p', { class: 'heading' }, "Score"),
+                                    m('p', { class: 'title' }, DiceGame.score)
+                                ])
+                            ]),
                         ]),
-                        m('div', { class: 'control' }, [
-                            m('button', {
-                                class: 'button is-info', type: 'button', required: "required",
-                                onclick: function () {
-                                    // Affecter la value de l'input a la var name
-                                    DiceGame.name = document.querySelector('#txtScore').value
-                                    Score.currentScore(DiceGame.name)
-                                },
-                            }, 'My score')
-                        ])
-                    ]),
-
-                    m('div', { class: 'level' }, [
-                        m('label', { class: 'level-item' }, "turn: " + DiceGame.turn),
-                        m('label', { class: 'level-item' }, "score: " + DiceGame.score),
-                    ]),
-                    m('label', { class: 'label' }, "Dice 1: " + DiceGame.d1),
-                    m('label', { class: 'label' }, "Dice 2: " + DiceGame.d2),
-                    m('button', {
-                        class: 'button is-link',
-                        onclick: function (e) { DiceGame.play() }
-                    }, "Play"),
-                ])
+                        m('div', { class: 'field' }, [
+                            m('label', { class: 'label' }, "Dice 1:"),
+                            m('p', { class: 'control' }, DiceGame.d1)
+                        ]),
+                        m('div', { class: 'field' }, [
+                            m('label', { class: 'label' }, "Dice 2:"),
+                            m('p', { class: 'control' }, DiceGame.d2)
+                        ]),
+                        m('button', {
+                            class: 'button is-link is-fullwidth',
+                            disabled: !DiceGame.authenticated,
+                            onclick: function (e) { DiceGame.play() }
+                        }, "Play"),
+                    ])
+                ]);
             }
         }
+
 
         // Where to store scores
         var Score = {
             list: [],
-            myscore: null,
+            myscores: [],
             loadList: function () {
                 return m.request({ method: "GET", url: "https://backendless-374223.ew.r.appspot.com/_ah/api/myApi/v1/topscores/" })
                     .then(function (result) {
@@ -92,20 +99,17 @@
                 return m.request({
                     method: "GET",
                     url: "https://backendless-374223.ew.r.appspot.com/_ah/api/myApi/v1/addScore/" + score + "/" + name
+                }).then(function (result) {
+                    Score.loadList()
                 })
-                    .then(function (result) {
-                        Score.loadList()
-                    })
             },
-            // Implementation of current score
-            currentScore: function (player) {
+            LoadCurrentScores: function (player) {
                 if (player.trim().length !== 0) {
                     return m.request({ method: "GET", url: "https://backendless-374223.ew.r.appspot.com/_ah/api/myApi/v1/myscores/" + player.trim() })
                         .then(function (result) {
-                            if (result && result.properties && result.properties.score) {
-                                Score.myscore = result.properties.score.toString()
-                            }
-                            else Score.myscore = "Invalid name or no score found"
+                            if (result && result.items) 
+                                Score.myscores = result.items
+                            else Score.myscores = []
                         })
                 }
             }
@@ -115,11 +119,11 @@
             oninit: Score.loadList,
             view: function () {
                 return m('div', [
-                    m('div', { class: 'subtitle' }, "Top 10 Scores"),
-                    m('table', { class: 'table is-striped' }, [
+                    m('div', { class: 'title' }, "Top 10 Scores"),
+                    m('table', { class: 'table is-striped is-fullwidth is-hoverable' }, [
                         m('tr', [
-                            m('th', { width: "20px" }, "Name"),
-                            m('th', { width: "50px" }, "Score"),
+                            m('th', { class: 'title is-5' }, "Name"),
+                            m('th', { class: 'title is-5' }, "Score"),
                         ]),
                         Score.list.map(function (item) {
                             return m("tr", [
@@ -134,13 +138,21 @@
 
         // Displaying actual score 
         var CurrentScoreView = {
-            oninit: function () { Score.currentScore(DiceGame.name) },
+            oninit: function () { Score.LoadCurrentScores(DiceGame.name) },
             view: function () {
-                return m('div', { class: 'level-item has-text-centered' }, [
-                    m('div', [
-                        m('p', { class: 'heading' }, DiceGame.name + " current score TEST"),
-                        m('p', { class: 'title' }, Score.myscore)
-                    ])
+                return m('div', [
+                    m('div', { class: 'g_id_signin', 'data-type': 'standard' }),
+                    // my top scores
+                    m('table', { class: 'table is-hoverable is-fullwidth' }, [
+                        m('tr', [
+                            m('th', { class: 'title is-5' }, "My Best Scores"),
+                        ]),
+                        Score.myscores.map(function (item) {
+                            return m("tr", [
+                                m('td', m('label', item.properties.score)),
+                            ])
+                        })
+                    ]),
                 ])
             }
         }
@@ -149,6 +161,13 @@
         var Hello = {
             view: function () {
                 return m('div', { class: 'container is-widescreen' }, [
+                    m('div', {
+                        id: 'g_id_onload',
+                        'data-client_id': '275630142584-q6hvhafterlt56tggflh4528h69b9b8u.apps.googleusercontent.com',
+                        'data-auto_prompt_error_callback': 'handleError',
+                        'data-callback': 'handleCredentialResponse'
+                    }),
+
                     m("h1", { class: 'title' }, 'The Dice Game'),
                     m('div', { class: 'tile is-ancestor' }, [
                         m("div", { class: 'tile m-3' }, m('div', { class: 'tile is-child box' }, m(DiceView))),
@@ -159,7 +178,24 @@
             }
         }
 
+
         m.mount(document.body, Hello)
+
+        function handleCredentialResponse(response) {
+            console.log("Successfully logged in")
+            const responsePayload = jwt_decode(response.credential);
+
+            const userId = responsePayload.sub;
+            const userEmail = responsePayload.email;
+            DiceGame.name = responsePayload.given_name;
+            DiceGame.authenticated = true;
+            Score.LoadCurrentScores(DiceGame.name);
+            m.redraw();
+        }
+
+        function handleError(error) {
+            console.error("Authentication error:", error);
+        }
     </script>
 
 </body>
