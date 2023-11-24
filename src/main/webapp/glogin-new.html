@@ -15,7 +15,7 @@
     <script>
         function handleCredentialResponse(response) {
             console.log("callback called:" + response.credential)
-            const responsePayload = jwt_decode(response.credential);
+            const responsePayload = jwtDecode(response.credential);
             console.log(responsePayload)
 
             const userId = responsePayload.sub;
