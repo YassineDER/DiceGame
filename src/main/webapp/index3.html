@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://unpkg.com/mithril/mithril.js"></script>
-    <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@4.0.0/build/cjs/index.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
@@ -183,7 +183,7 @@
 
         function handleCredentialResponse(response) {
             console.log("Successfully logged in")
-            const responsePayload = jwt_decode(response.credential);
+            const responsePayload = jwtDecode(response.credential);
 
             const userId = responsePayload.sub;
             const userEmail = responsePayload.email;
